@@ -1,0 +1,26 @@
+{
+  "name": "simple-vad",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hayanmind/vad.js.git"
+  },
+  "author": "Jeungmin Oh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hayanmind/vad.js/issues"
+  },
+  "homepage": "https://github.com/hayanmind/vad.js#readme",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-node6": "^11.0.0"
+  }
+}

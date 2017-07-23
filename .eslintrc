@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "airbnb"
+  ],
+  "parser": "babel-eslint",
+  "plugins": [
+  ],
+  "rules": {
+    "global-require": "off" // For require(IMAGE_PATH)
+  },
+  "ecmaFeatures": {
+    "jsx": true
+  },
+  "globals": {
+    "fetch": false
+  }
+}
