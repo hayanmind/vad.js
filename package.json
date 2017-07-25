@@ -22,5 +22,11 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-node6": "^11.0.0"
+  },
+  "dependencies": {
+    "decibels": "^1.0.1",
+    "ndarray": "^1.0.18",
+    "ndarray-fft": "^1.0.3",
+    "scijs-window-functions": "^2.0.2"
   }
 }
