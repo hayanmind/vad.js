@@ -4,12 +4,10 @@
   ],
   "parser": "babel-eslint",
   "plugins": [
+    "import"
   ],
   "rules": {
     "global-require": "off" // For require(IMAGE_PATH)
-  },
-  "ecmaFeatures": {
-    "jsx": true
   },
   "globals": {
     "fetch": false
