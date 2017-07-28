@@ -16,15 +16,15 @@ audioFileAsset.get('format', (format) => {
     filter: [{ f: 100000, v: 1 }], // no filter
   });
 
-  const { fftSize, bufferLen, smoothingTimeConstant } = vadObject.options;
-  const fft = new FFT(fftSize, bufferLen, smoothingTimeConstant);
+  const { fftSize, bufferSize, smoothingTimeConstant } = vadObject.options;
+  const fft = new FFT(fftSize, bufferSize, smoothingTimeConstant);
 
   console.log(vadObject);
 
   let prevVadClass = '';
-  audioFileAsset.decodeToBuffer((buffer) => {
-    for (let i = 0; i < buffer.length; i += bufferLen) {
-      const pcmBuffer = buffer.slice(i, i + bufferLen);
+  audioFileAsset.decodeToBuffer((audioBuffer) => {
+    for (let i = 0; i < audioBuffer.length; i += bufferSize) {
+      const pcmBuffer = audioBuffer.slice(i, i + bufferSize);
       fft.capture(pcmBuffer);
       const floatFrequencyData = fft.getFloatFrequencyData();
 
@@ -32,7 +32,7 @@ audioFileAsset.get('format', (format) => {
       if (prevVadClass !== vadClass) {
         console.log(
           i * (1 / vadObject.options.sampleRate),
-          (i + vadObject.options.bufferLen) * (1 / vadObject.options.sampleRate),
+          (i + vadObject.options.bufferSize) * (1 / vadObject.options.sampleRate),
           vadClass,
           voiceTrend,
         );
