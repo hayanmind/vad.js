@@ -7,8 +7,8 @@ export default function SimpleVad(options) {
   const { fftSize, bufferSize, smoothingTimeConstant } = this.vad.options;
   this.fft = new FFT(fftSize, bufferSize, smoothingTimeConstant);
 
-  this.predict = (pcmBuffer) => {
-    this.fft.capture(pcmBuffer);
+  this.predict = (floatPcmBuffer) => {
+    this.fft.capture(floatPcmBuffer);
     const floatFrequencyData = this.fft.getFloatFrequencyData();
     const { vadClass } = this.vad.processFrequencyData(floatFrequencyData);
     return { vadClass };

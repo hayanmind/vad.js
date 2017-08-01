@@ -24,8 +24,8 @@ audioFileAsset.get('format', (format) => {
 
   audioFileAsset.decodeToBuffer((audioBuffer) => {
     for (let i = 0; i < audioBuffer.length; i += bufferSize) {
-      const pcmBuffer = audioBuffer.slice(i, i + bufferSize);
-      const { vadClass } = vadObject.predict(pcmBuffer);
+      const floatPcmBuffer = audioBuffer.slice(i, i + bufferSize);
+      const { vadClass } = vadObject.predict(floatPcmBuffer);
 
       if (vadClass === 'voiced') {
         voicedCnt += 1;
