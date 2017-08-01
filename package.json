@@ -31,10 +31,8 @@
   },
   "dependencies": {
     "av": "^0.4.9",
-    "decibels": "^1.0.1",
     "ndarray": "^1.0.18",
     "ndarray-fft": "^1.0.3",
-    "pcm": "^1.0.3",
     "scijs-window-functions": "^2.0.2"
   }
 }
