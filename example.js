@@ -4,7 +4,7 @@ import AV from 'av';
 import VAD from './lib/vad';
 import FFT from './lib/fft';
 
-const audioFileAsset = AV.Asset.fromFile('./audio/micro-doc.wav');
+const audioFileAsset = AV.Asset.fromFile('./audio/Learning_Korean.wav');
 
 audioFileAsset.get('format', (format) => {
   console.log(format);
@@ -22,6 +22,8 @@ audioFileAsset.get('format', (format) => {
   console.log(vadObject);
 
   let prevVadClass = '';
+  let voicedCnt = 0;
+  let unvoicedCnt = 0;
   audioFileAsset.decodeToBuffer((audioBuffer) => {
     for (let i = 0; i < audioBuffer.length; i += bufferSize) {
       const pcmBuffer = audioBuffer.slice(i, i + bufferSize);
@@ -29,6 +31,11 @@ audioFileAsset.get('format', (format) => {
       const floatFrequencyData = fft.getFloatFrequencyData();
 
       const { vadClass, voiceTrend } = vadObject.processFrequencyData(floatFrequencyData);
+      if (vadClass === 'voiced') {
+        voicedCnt += 1;
+      } else if (vadClass === 'unvoiced') {
+        unvoicedCnt += 1;
+      }
       if (prevVadClass !== vadClass) {
         console.log(
           i * (1 / vadObject.options.sampleRate),
@@ -39,5 +46,6 @@ audioFileAsset.get('format', (format) => {
       }
       prevVadClass = vadClass;
     }
+    console.log(voicedCnt, unvoicedCnt);
   });
 });
