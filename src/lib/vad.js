@@ -83,7 +83,7 @@ exports.default = function (options) {
     // Update the local version of the Linear FFT
     const fft = this.floatFrequencyData;
     for (let i = 0, iLen = fft.length; i < iLen; i += 1) {
-      this.floatFrequencyDataLinear[i] = 10 ** (fft[i] / 10);
+      this.floatFrequencyDataLinear[i] = Math.pow(10, fft[i] / 10);
     }
     this.ready = {};
   };

@@ -49,7 +49,9 @@ export default function (fftSize, bufferSize, smoothingTimeConstant) {
       for (let i = 0; i < self.fftSize; i += 1) {
         self.fdata[i] =
           (k * self.fdata[i]) +
-          ((1 - k) * (Math.sqrt((inputRe.get(i) ** 2) + (inputIm.get(i) ** 2)) / fftSize));
+          ((1 - k) *
+            (Math.sqrt(Math.pow(inputRe.get(i), 2) + Math.pow(inputIm.get(i), 2)) / fftSize)
+          );
       }
     }
   };
