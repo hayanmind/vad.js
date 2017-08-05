@@ -14,10 +14,10 @@ exports.default = function (fftSize, bufferSize, smoothingTimeConstant) {
   this.data = [];
   this.fdata = new Float32Array(this.fftSize);
 
-  const self = this;
+  var self = this;
 
-  this.capture = pcmBuffer => {
-    const channelData = Array.prototype.slice.call(pcmBuffer);
+  this.capture = function (pcmBuffer) {
+    var channelData = Array.prototype.slice.call(pcmBuffer);
 
     // shift data & ensure size
     self.data = self.data.concat(channelData).slice(-self.bufferSize);
@@ -29,43 +29,47 @@ exports.default = function (fftSize, bufferSize, smoothingTimeConstant) {
     if (self.fftCount >= self.fftSize) {
       self.fftCount = 0;
 
-      const input = self.data.slice(-self.fftSize);
+      var input = self.data.slice(-self.fftSize);
 
       // do windowing
-      for (let i = 0; i < self.fftSize; i += 1) {
+      for (var i = 0; i < self.fftSize; i += 1) {
         input[i] *= (0, _blackman2.default)(i, self.fftSize);
       }
 
       // create complex parts
-      const inputRe = (0, _ndarray2.default)(input);
-      const inputIm = (0, _ndarray2.default)(new Float32Array(self.fftSize));
+      var inputRe = (0, _ndarray2.default)(input);
+      var inputIm = (0, _ndarray2.default)(new Float32Array(self.fftSize));
 
       // do fast fourier transform
       (0, _ndarrayFft2.default)(1, inputRe, inputIm);
 
       // apply smoothing factor
-      const k = Math.min(1, Math.max(self.smoothingTimeConstant, 0));
+      var k = Math.min(1, Math.max(self.smoothingTimeConstant, 0));
 
-      for (let i = 0; i < self.fftSize; i += 1) {
-        self.fdata[i] = k * self.fdata[i] + (1 - k) * (Math.sqrt(Math.pow(inputRe.get(i), 2) + Math.pow(inputIm.get(i), 2)) / fftSize);
+      for (var _i = 0; _i < self.fftSize; _i += 1) {
+        self.fdata[_i] = k * self.fdata[_i] + (1 - k) * (Math.sqrt(Math.pow(inputRe.get(_i), 2) + Math.pow(inputIm.get(_i), 2)) / fftSize);
       }
     }
   };
 
-  this.getFloatFrequencyData = (size = self.frequencyBinCount) => {
+  this.getFloatFrequencyData = function () {
+    var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : self.frequencyBinCount;
+
     // https://stackoverflow.com/questions/26241430/fft-values-of-webaudios-analysernode-are-outside-range
 
-    const floatFrequencyDataLength = Math.min(self.frequencyBinCount, size);
-    const floatFrequencyData = new Float32Array(floatFrequencyDataLength);
+    var floatFrequencyDataLength = Math.min(self.frequencyBinCount, size);
+    var floatFrequencyData = new Float32Array(floatFrequencyDataLength);
 
-    for (let i = 0, l = floatFrequencyDataLength; i < l; i += 1) {
+    for (var i = 0, l = floatFrequencyDataLength; i < l; i += 1) {
       floatFrequencyData[i] = self.db(self.fdata[i]);
     }
 
     return floatFrequencyData;
   };
 
-  this.db = value => 20.0 * Math.log10(value);
+  this.db = function (value) {
+    return 20.0 * Math.log10(value);
+  };
 
   return {
     capture: this.capture,

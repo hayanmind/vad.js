@@ -1,17 +1,12 @@
-import VAD from './lib/vad';
-import FFT from './lib/fft';
+import VAD from './lib/vad2';
 
 export default function SimpleVad(options) {
   this.vad = new VAD(options);
   this.options = this.vad.options;
-  const { fftSize, bufferSize, smoothingTimeConstant } = this.vad.options;
-  this.fft = new FFT(fftSize, bufferSize, smoothingTimeConstant);
 
   this.predict = (floatPcmBuffer) => {
-    this.fft.capture(floatPcmBuffer);
-    const floatFrequencyData = this.fft.getFloatFrequencyData();
-    const { vadClass } = this.vad.processFrequencyData(floatFrequencyData);
-    return { vadClass };
+    const resultObject = this.vad.detectVoiceActivity(floatPcmBuffer);
+    return resultObject;
   };
 
   return {

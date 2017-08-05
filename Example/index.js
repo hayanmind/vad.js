@@ -1,20 +1,19 @@
 import AV from 'av';
 import SimpleVad from 'simple-vad';
 
-const audioFileAsset = AV.Asset.fromFile('./audio/Learning_Korean.wav');
+const audioFileAsset = AV.Asset.fromFile('./audio/test.wav');
 
 audioFileAsset.get('format', (format) => {
   console.log(format);
   const options = {
-    sampleRate: format.sampleRate,
-    energy_threshold_ratio_pos: 1.5,
-    energy_threshold_ratio_neg: 0.75,
-    energy_integration: 0.75,
-    filter: [{ f: 100000, v: 1 }], // no filter
+    minAmplitude: 0.2,
+    voiceTrendMax: 3,
+    voiceTrendMin: 0,
+    voiceTrendStart: 3,
+    voiceTrendEnd: 0,
   };
 
   const vadObject = new SimpleVad(options);
-  const { bufferSize } = vadObject.options;
 
   console.log(vadObject);
 
@@ -23,9 +22,11 @@ audioFileAsset.get('format', (format) => {
   let unvoicedCnt = 0;
 
   audioFileAsset.decodeToBuffer((audioBuffer) => {
+    const bufferSize = 512;
+    const { sampleRate } = format;
     for (let i = 0; i < audioBuffer.length; i += bufferSize) {
       const floatPcmBuffer = audioBuffer.slice(i, i + bufferSize);
-      const { vadClass } = vadObject.predict(floatPcmBuffer);
+      const { vadClass, voiceTrend, amplitude } = vadObject.predict(floatPcmBuffer);
 
       if (vadClass === 'voiced') {
         voicedCnt += 1;
@@ -34,9 +35,11 @@ audioFileAsset.get('format', (format) => {
       }
       if (prevVadClass !== vadClass) {
         console.log(
-          i * (1 / vadObject.options.sampleRate),
-          (i + vadObject.options.bufferSize) * (1 / vadObject.options.sampleRate),
+          i * (1 / sampleRate),
+          (i + bufferSize) * (1 / sampleRate),
           vadClass,
+          voiceTrend,
+          amplitude,
         );
       }
       prevVadClass = vadClass;

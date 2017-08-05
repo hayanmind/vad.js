@@ -20,7 +20,7 @@ exports.default = function (options) {
   };
 
   // User options
-  for (const option in options) {
+  for (var option in options) {
     if (options.hasOwnProperty(option)) {
       this.options[option] = options[option];
     }
@@ -31,16 +31,16 @@ exports.default = function (options) {
   this.iterationFrequency = this.options.sampleRate / this.options.bufferSize;
   this.iterationPeriod = 1 / this.iterationFrequency;
 
-  const DEBUG = true;
+  var DEBUG = true;
   if (DEBUG) {
-    console.log(`Vad | sampleRate: ${this.options.sampleRate} | hertzPerBin: ${this.hertzPerBin} | iterationFrequency: ${this.iterationFrequency} | iterationPeriod: ${this.iterationPeriod}`);
+    console.log('Vad | sampleRate: ' + this.options.sampleRate + ' | hertzPerBin: ' + this.hertzPerBin + ' | iterationFrequency: ' + this.iterationFrequency + ' | iterationPeriod: ' + this.iterationPeriod);
   }
 
   this.setFilter = function (shape) {
     this.filter = [];
-    for (let i = 0, iLen = this.options.fftSize / 2; i < iLen; i += 1) {
+    for (var i = 0, iLen = this.options.fftSize / 2; i < iLen; i += 1) {
       this.filter[i] = 0;
-      for (let j = 0, jLen = shape.length; j < jLen; j += 1) {
+      for (var j = 0, jLen = shape.length; j < jLen; j += 1) {
         if (i * this.hertzPerBin < shape[j].f) {
           this.filter[i] = shape[j].v;
           break; // Exit j loop
@@ -65,24 +65,28 @@ exports.default = function (options) {
   this.voiceTrendStart = 3;
   this.voiceTrendEnd = -3;
 
-  const frequencyBinCount = this.options.fftSize / 2;
+  var frequencyBinCount = this.options.fftSize / 2;
   this.floatFrequencyData = new Float32Array(frequencyBinCount);
 
   // Setup local storage of the Linear FFT data
   this.floatFrequencyDataLinear = new Float32Array(this.floatFrequencyData.length);
 
-  const self = this;
+  var self = this;
   this.processFrequencyData = function (floatFrequencyData) {
     self.floatFrequencyData = floatFrequencyData;
     self.update();
-    const { vadClass, voiceTrend } = self.monitor();
-    return { vadClass, voiceTrend };
+
+    var _self$monitor = self.monitor(),
+        vadClass = _self$monitor.vadClass,
+        voiceTrend = _self$monitor.voiceTrend;
+
+    return { vadClass: vadClass, voiceTrend: voiceTrend };
   };
 
   this.update = function () {
     // Update the local version of the Linear FFT
-    const fft = this.floatFrequencyData;
-    for (let i = 0, iLen = fft.length; i < iLen; i += 1) {
+    var fft = this.floatFrequencyData;
+    for (var i = 0, iLen = fft.length; i < iLen; i += 1) {
       this.floatFrequencyDataLinear[i] = Math.pow(10, fft[i] / 10);
     }
     this.ready = {};
@@ -93,10 +97,10 @@ exports.default = function (options) {
       return this.energy;
     }
 
-    let energy = 0;
-    const fft = this.floatFrequencyDataLinear;
+    var energy = 0;
+    var fft = this.floatFrequencyDataLinear;
 
-    for (let i = 0, iLen = fft.length; i < iLen; i += 1) {
+    for (var i = 0, iLen = fft.length; i < iLen; i += 1) {
       energy += this.filter[i] * fft[i] * fft[i];
     }
 
@@ -107,8 +111,8 @@ exports.default = function (options) {
   };
 
   this.monitor = function () {
-    const energy = this.getEnergy();
-    const signal = energy - this.energy_offset;
+    var energy = this.getEnergy();
+    var signal = energy - this.energy_offset;
 
     if (signal > this.energy_threshold_pos) {
       this.voiceTrend = this.voiceTrend + 1 > this.voiceTrendMax ? this.voiceTrendMax : this.voiceTrend + 1;
@@ -123,8 +127,8 @@ exports.default = function (options) {
       }
     }
 
-    let start = false;
-    let end = false;
+    var start = false;
+    var end = false;
 
     if (this.voiceTrend > this.voiceTrendStart) {
       // Start of speech detected
@@ -136,7 +140,7 @@ exports.default = function (options) {
 
     // Integration brings in the real-time aspect
     // through the relationship with the frequency this functions is called.
-    const integration = signal * this.iterationPeriod * this.options.energy_integration;
+    var integration = signal * this.iterationPeriod * this.options.energy_integration;
 
     // Idea?: The integration is affected by the voiceTrend magnitude? - Not sure. Not doing atm.
 
@@ -158,15 +162,7 @@ exports.default = function (options) {
       this.vadState = false;
     }
 
-    const vadInfo = `e: ${energy} | 
-      e_of: ${this.energy_offset} | 
-      e+_th: ${this.energy_threshold_pos} | 
-      e-_th: ${this.energy_threshold_neg} | 
-      signal: ${signal} | 
-      int: ${integration} | 
-      voiceTrend: ${this.voiceTrend} | 
-      start: ${start} | 
-      end: ${end}`;
+    var vadInfo = 'e: ' + energy + ' | \n      e_of: ' + this.energy_offset + ' | \n      e+_th: ' + this.energy_threshold_pos + ' | \n      e-_th: ' + this.energy_threshold_neg + ' | \n      signal: ' + signal + ' | \n      int: ' + integration + ' | \n      voiceTrend: ' + this.voiceTrend + ' | \n      start: ' + start + ' | \n      end: ' + end;
     // console.log(vadInfo);
 
     return { vadClass: this.vadState ? 'voiced' : 'unvoiced', voiceTrend: this.voiceTrend };

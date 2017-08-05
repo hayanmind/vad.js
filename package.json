@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "transpile": "rm -rf src && babel src-es6 --out-dir src --presets=node6 --copy-files"
+    "transpile": "rm -rf src && babel src-es6 --out-dir src --presets=es2015,stage-0 --copy-files"
   },
   "pre-commit": [
     "transpile"
@@ -27,7 +27,8 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
-    "babel-preset-node6": "^11.0.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "eslint": "^4.3.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
